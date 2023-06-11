@@ -1,4 +1,4 @@
-import { useBooksQuery, useCreateBookMutation, useDeleteBookMutation } from './graphql/generated';
+import { useBooksQuery, useCreateBookMutation, useDeleteBookMutation, useUpdateBookMutation } from './graphql/generated';
 import { useState } from 'react';
 
 function App() {
@@ -6,6 +6,7 @@ function App() {
   const [createBook] = useCreateBookMutation({ refetchQueries: ["books"] });
   const [title, setTitle] = useState('');
   const [deleteBook] = useDeleteBookMutation({ refetchQueries: ["books"] });
+  const [updateBook] = useUpdateBookMutation();
 
   return (
     <div>
@@ -20,6 +21,14 @@ function App() {
       </button>
       {books.map((book) => (
         <div key={book.id}>
+          <input
+            value={book.title || ''}
+            onChange={(e) =>
+              updateBook({
+                variables: { id: book.id, params: { title: e.target.value } },
+              })
+            }
+          />
           <div>{book.title}</div>
           <button onClick={() => deleteBook({ variables: { id: book.id } })}>
             削除
